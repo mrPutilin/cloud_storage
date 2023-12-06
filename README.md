@@ -1,7 +1,8 @@
 # Дипломный проект - Облачное хранилище
 
 ### Описание:
-Проект представляет из себя REST-севрис разработанный на фреймворке Spring Boot в соответсвии с [протоколом](https://github.com/netology-code/jd-homeworks/blob/master/diploma/CloudServiceSpecification.yaml)    ### Интерфейс сервера реализует следующий функционал:
+Проект представляет из себя REST-севрис разработанный на фреймворке Spring Boot в соответсвии с [протоколом](https://github.com/netology-code/jd-homeworks/blob/master/diploma/CloudServiceSpecification.yaml).
+### Интерфейс сервера реализует следующий функционал:
 - загрузке файлов
 - изменении имени
 - вывод списка всех файлов
