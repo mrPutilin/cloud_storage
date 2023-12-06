@@ -1,15 +1,21 @@
 package ru.putilin.cloud_storage.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "files")
 public class File {
 
     public File() {
+    }
+
+    public File(String fileName, Long fileSize, String type, String hash, LocalDateTime uploadDate) {
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.type = type;
+        this.hash = hash;
+        this.uploadDate = uploadDate;
     }
 
     @Id
@@ -24,9 +30,6 @@ public class File {
 
     @Column(name = "type")
     private String type;
-
-    @Column(name = "file_path")
-    private String filePath;
 
     @Column(name = "hash")
     private String hash;
@@ -64,14 +67,6 @@ public class File {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
     }
 
     public String getHash() {

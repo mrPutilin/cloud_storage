@@ -19,9 +19,9 @@ import java.time.LocalDateTime;
 @Component
 public class FileManager {
 
-    private final static String STORE = "/Users/evgenijputilin/Desktop/netologyProject/cloud_storage/src/main/resources/storage";
+    private final static String STORE = "src/main/resources/storage";
 
-    public File createFile(String fileName ,MultipartFile source) {
+    public File createFile(String fileName, MultipartFile source) {
         LocalDateTime uploadedTimeOfFile = LocalDateTime.now();
         String hash = new DigestUtils("SHA3-256").digestAsHex(source.getOriginalFilename() + uploadedTimeOfFile);
         File uploadedFile = new File();
@@ -41,9 +41,8 @@ public class FileManager {
         try (FileOutputStream out = new FileOutputStream(file.toString());
              BufferedOutputStream bout = new BufferedOutputStream(out)) {
             bout.write(resource.getBytes(), 0, resource.getBytes().length);
-        } catch (IOException ex) {
-            throw new IOException(ex.getMessage());
         }
+
     }
 
     public void delete(String fileName) throws IOException {
@@ -61,14 +60,9 @@ public class FileManager {
         }
     }
 
-    public void renameFile(String fileName, String newName) {
+    public void renameFile(String fileName, String newName) throws IOException {
         Path source = Paths.get(STORE, fileName);
-        try {
-            Files.move(source, source.resolveSibling(newName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Files.move(source, source.resolveSibling(newName));
     }
-
 
 }

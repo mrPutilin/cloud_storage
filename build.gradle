@@ -23,6 +23,16 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation "org.mockito:mockito-core:3.+"
+//	 https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter
+	testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.7.0'
+	implementation group: 'org.mockito', name: 'mockito-core', version: '5.7.0'
+	// https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter
+	testImplementation group: 'org.testcontainers', name: 'junit-jupiter', version: '1.19.3'
+	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.1'
+	// https://mvnrepository.com/artifact/org.springframework/spring-test
+	testImplementation group: 'org.springframework', name: 'spring-test', version: '6.1.0'
 
 	// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.2.0'
@@ -30,6 +40,20 @@ dependencies {
 	implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
 	// https://mvnrepository.com/artifact/commons-codec/commons-codec
 	implementation group: 'commons-codec', name: 'commons-codec', version: '1.16.0'
+	// https://mvnrepository.com/artifact/org.testcontainers/postgresql
+	testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.19.3'
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-testcontainers
+	implementation group: 'org.springframework.boot', name: 'spring-boot-testcontainers', version: '3.2.0'
+	// https://mvnrepository.com/artifact/org.liquibase/liquibase-core
+	implementation group: 'org.liquibase', name: 'liquibase-core', version: '4.23.1'
+	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.22.0'
+	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.22.0'
+	// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.22.0'
+
+
 
 }
 

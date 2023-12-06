@@ -1,19 +1,15 @@
 package ru.putilin.cloud_storage.dto;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
-public class ExceptionDTO{
+public class ExceptionDTO {
 
     private String message;
+    private int id;
 
-    public ExceptionDTO( String message) {
+    public ExceptionDTO(String message, int id) {
         this.message = message;
+        this.id = id;
     }
-
 
     public String getMessage() {
         return message;
@@ -23,4 +19,7 @@ public class ExceptionDTO{
         this.message = message;
     }
 
+    public int getId() {
+        return id;
+    }
 }

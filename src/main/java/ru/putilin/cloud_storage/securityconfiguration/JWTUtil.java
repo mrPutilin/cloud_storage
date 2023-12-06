@@ -17,11 +17,11 @@ public class JWTUtil {
     @Value("{jwt.secret}")
     String secret;
 
-    public String generateToken(String username) {
+    public String generateToken(String email) {
         Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(15).toInstant());
         return JWT.create()
                 .withSubject("User details")
-                .withClaim("username", username)
+                .withClaim("email", email)
                 .withIssuedAt(new Date())
                 .withIssuer("putilin's cloud storage")
                 .withExpiresAt(expirationDate)
@@ -35,8 +35,7 @@ public class JWTUtil {
                 .build();
 
         DecodedJWT jwt = verifier.verify(token);
-        //TODO возможно тут необходим try-catch с обработкой и запись в log
 
-        return jwt.getClaim("username").asString();
+        return jwt.getClaim("email").asString();
     }
 }

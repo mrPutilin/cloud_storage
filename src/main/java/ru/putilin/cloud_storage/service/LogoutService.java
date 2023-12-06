@@ -8,7 +8,6 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.putilin.cloud_storage.dao.TokenDAO;
-import ru.putilin.cloud_storage.entity.JWTToken;
 
 @Service
 public class LogoutService implements LogoutHandler {
@@ -27,10 +26,6 @@ public class LogoutService implements LogoutHandler {
             return;
         String jwt = authHeader.substring(7);
         tokenDAO.deleteJWTTokenByAuthToken(jwt);
-        System.out.println("PASSED");
-//        JWTToken storedToken = tokenDAO.findByAuthToken(jwt).orElseThrow();
-//        storedToken.setExpired(true);
-//        tokenDAO.save(storedToken);
         SecurityContextHolder.clearContext();
 
     }

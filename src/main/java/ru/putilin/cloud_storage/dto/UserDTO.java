@@ -1,20 +1,20 @@
 package ru.putilin.cloud_storage.dto;
 
 public class UserDTO {
-    private String username;
+    private String login;
     private String password;
 
-    public UserDTO(String name, String password) {
-        this.username = name;
+    public UserDTO(String login, String password) {
+        this.login = login;
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
+    public String getLogin() {
+        return login;
     }
 
-    public void setName(String name) {
-        this.username = name;
+    public void setLogin(String name) {
+        this.login = login;
     }
 
     public String getPassword() {

@@ -2,21 +2,30 @@ version: '2'
 
 services:
   cloud:
-    image: cloudimage
-    container_name: cloud_container
+    build: .
+    container_name: app-container
     ports:
-      - "8080:8080"
+        - "8080:8080"
+    environment:
+      - spring.datasource.url=jdbc:postgresql://mypostgres:5432/postgres
+    networks:
+      - cloud-net
     depends_on:
-      - db
+      - mypostgres
 
-  db:
-    container_name: pg_jdbc
+  mypostgres:
+    container_name: db-container
     image: postgres:16
     environment:
       POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: cloud_pg
     volumes:
       - ./postgres_data:/var/lib/postgresql/data/
     ports:
-      - "8081:5432"
+      - "5432:5432"
+    networks:
+      - cloud-net
+
+networks:
+  cloud-net: {}

@@ -1,25 +1,21 @@
 package ru.putilin.cloud_storage.service;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.putilin.cloud_storage.dao.FileDAO;
-import ru.putilin.cloud_storage.dto.EditFilenameDTO;
-import ru.putilin.cloud_storage.dto.FileDTO;
-import ru.putilin.cloud_storage.dto.TokenDTO;
-import ru.putilin.cloud_storage.dto.UserDTO;
+import ru.putilin.cloud_storage.dto.*;
 import ru.putilin.cloud_storage.entity.File;
-import ru.putilin.cloud_storage.entity.JWTToken;
-import ru.putilin.cloud_storage.entity.User;
+import ru.putilin.cloud_storage.exception.ExceptionRelatedHandleFile;
+import ru.putilin.cloud_storage.exception.IncorrectInputException;
 import ru.putilin.cloud_storage.filemanager.FileManager;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,6 +23,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class FileService {
 
+    private final static Logger LOG = LoggerFactory.getLogger(FileService.class);
     private final FileDAO fileDAO;
     private final FileManager fileManager;
     private final ModelMapper modelMapper;
@@ -37,57 +34,99 @@ public class FileService {
         this.modelMapper = modelMapper;
     }
 
-    public void uploadFile(String fileName ,MultipartFile file) throws IOException {
-        File uploadedNewFile = fileManager.createFile(fileName, file);
-        fileManager.upload(fileName, file);
-        fileDAO.save(uploadedNewFile);
+    public void uploadFile(String fileName, MultipartFile file) throws ExceptionRelatedHandleFile {
+        if (file == null) {
+            LOG.info("File not attached");
+            throw new IncorrectInputException("File not attached");
+        }
+        if (fileDAO.findByFileName(fileName).isPresent()) {
+            LOG.info("File already exist in the database");
+            throw new IncorrectInputException("File already exist");
+        }
+
+       try {
+           File uploadedNewFile = fileManager.createFile(fileName, file);
+           fileDAO.save(uploadedNewFile);
+           LOG.info("File {} uploaded in the database", fileName);
+           fileManager.upload(fileName, file);
+           LOG.info("File {} uploaded in the store", fileName);
+       } catch (IOException e) {
+           LOG.warn("File {} exist already in the store", fileName);
+           throw new ExceptionRelatedHandleFile("File exist already");
+
+       }
+
     }
 
-
-    public FileDTO downloadFile(String fileName) throws MalformedURLException {
-        Optional<File> file = fileDAO.findByFileName(fileName);
+    public FileDTO downloadFile(String fileName) throws ExceptionRelatedHandleFile {
         FileDTO fileDTO = new FileDTO();
-        Resource downloadingFile = fileManager.download(fileName);
+
+        Optional<File> file = fileDAO.findByFileName(fileName);
         if (file.isPresent()) {
             fileDTO.setHash(file.get().getHash());
-            fileDTO.setFile(downloadingFile.toString());
+            LOG.info("File {} downloaded from the database", fileName);
+        } else {
+            LOG.warn("File {} is not exist in the database", fileName);
+            throw new IncorrectInputException("File is not exist");
+        }
+
+        try {
+        Resource downloadingFile = fileManager.download(fileName);
+        fileDTO.setFile(downloadingFile.toString());
+        LOG.info("File {} downloaded from the store", fileName);
+        } catch (IOException e) {
+            LOG.warn("File {} has not been found in the store", fileName);
+            throw new ExceptionRelatedHandleFile("File has not been found");
         }
 
         return fileDTO;
     }
 
-    public void delete(String fileName) throws IOException {
-        fileManager.delete(fileName);
-        fileDAO.deleteFileByFileName(fileName);
-    }
-
-    public void editNameOfFile(String fileName, EditFilenameDTO newFileName) {
-        Optional<File> file = fileDAO.findByFileName(fileName);
-        if (file.isPresent()) {
-            file.get().setFileName(newFileName.getName());
-            fileDAO.save(file.get());
-            fileManager.renameFile(fileName, newFileName.getName());
+    public void delete(String fileName) throws ExceptionRelatedHandleFile {
+        try {
+            if (fileDAO.findByFileName(fileName).isEmpty()) {
+                LOG.warn("File {} doesn't exist in database", fileName);
+                throw new IncorrectInputException("File doesn't exist");
+            }
+            fileDAO.deleteFileByFileName(fileName);
+            fileManager.delete(fileName);
+        } catch (IOException e) {
+            LOG.warn("File {} has not bee found in the store", fileName);
+            throw new ExceptionRelatedHandleFile("File has not been found");
         }
 
     }
 
-    public Map<String, Long> listOfFiles(int limit) {
+    public void editNameOfFile(String fileName, String newFileName) throws ExceptionRelatedHandleFile {
+        Optional<File> file = fileDAO.findByFileName(fileName);
+        if (file.isPresent()) {
+            file.get().setFileName(newFileName);
+            fileDAO.save(file.get());
+            LOG.info("Name of the file {} edited", fileName);
+        } else {
+            LOG.warn("File {} is not exist in the database", fileName);
+            throw new IncorrectInputException("File is not exist");
+        }
+
+        try {
+            fileManager.renameFile(fileName, newFileName);
+            LOG.info("File {} renamed in the store", fileName);
+        } catch (IOException e) {
+            LOG.warn("File {} isn't exist in the store", fileName);
+            throw new ExceptionRelatedHandleFile("File isn't exist");
+        }
+
+    }
+
+    public List<FileListDTO> listOfFiles(int limit) {
         return fileDAO.findAll(Pageable.ofSize(limit))
                 .stream()
-                .collect(Collectors.toMap(File::getFileName, File::getFileSize));
+                .map(this::convertFileToFileList)
+                .collect(Collectors.toList());
     }
 
-
-
-
-    public TokenDTO convert(JWTToken token) {
-        return this.modelMapper.map(token, TokenDTO.class);
+    public FileListDTO convertFileToFileList(File file) {
+        return this.modelMapper.map(file, FileListDTO.class);
     }
-
-    public User convertUserDtoToUser(UserDTO userDTO) {
-        return this.modelMapper.map(userDTO, User.class );
-    }
-
-
 
 }

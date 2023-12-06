@@ -1,4 +1,4 @@
-package ru.putilin.cloud_storage.securityconfiguration;
+package ru.putilin.cloud_storage.utilconfiguration;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

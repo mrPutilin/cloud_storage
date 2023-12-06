@@ -2,17 +2,17 @@ package ru.putilin.cloud_storage.dto;
 
 public class EditFilenameDTO {
 
-    private String name;
+    private String filename;
 
     public EditFilenameDTO() {
     }
 
-    public String getName() {
-        return name;
+    public String getFilename() {
+        return filename;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }
 

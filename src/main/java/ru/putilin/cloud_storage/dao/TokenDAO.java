@@ -22,5 +22,4 @@ public interface TokenDAO extends JpaRepository<JWTToken, Long> {
     boolean existsJWTTokenByUserId(Long userId);
 
 
-
 }

@@ -9,10 +9,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.putilin.cloud_storage.dao.TokenDAO;
 import ru.putilin.cloud_storage.entity.JWTToken;
+import ru.putilin.cloud_storage.exception.NotAuthorizedException;
 import ru.putilin.cloud_storage.service.UserServiceImpl;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class JWTFilter extends OncePerRequestFilter {
             String jwt = authHeader.substring(7);
             Optional<JWTToken> tokenFromDB = tokenDAO.findByAuthToken(jwt);
             if (jwt.isBlank() || tokenFromDB.isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT token");
+                throw new NotAuthorizedException("Invalid JWT Token");
             } else {
                 try {
                     String userName = jwtUtil.validateTokenAndExtractUser(jwt);
@@ -52,12 +52,12 @@ public class JWTFilter extends OncePerRequestFilter {
                     if (SecurityContextHolder.getContext().getAuthentication() == null) {
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
-                } catch (JWTVerificationException ecx) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
+                } catch (JWTVerificationException e) {
+                    throw new NotAuthorizedException("Verification is denied");
                 }
 
             }
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }
