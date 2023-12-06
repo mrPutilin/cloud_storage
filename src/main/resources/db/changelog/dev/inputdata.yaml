@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      author: putilin
+      id: 2
+      context: dev
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: bob@mail.ru
+              - column:
+                  name: password
+                  value: $2a$10$mjJ9yyEHuAyUZ16fJIxv4ur/BLdfHFL2VDae/deJFKTeXxpmlVCf2
+              - column:
+                  name: role
+                  value: ROLE_USER
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: mark@mail.ru
+              - column:
+                  name: password
+                  value: $2a$10$DcwLXtGs3hz8SenLqvICGuZ3D/tQPF2DGTzCb2AUf5oDff.anhCFK
+              - column:
+                  name: role
+                  value: ROLE_ADMIN

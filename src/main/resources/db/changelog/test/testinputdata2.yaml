@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      author: putilin
+      id: 5
+      context: test
+      changes:
+        - insert:
+            tableName: files
+            columns:
+              - column:
+                  name: file_name
+                  value: testfile
+              - column:
+                  name: file_size
+                  value: "3432"
+              - column:
+                  name: hash
+                  value: "349239203jif00"

@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      author: putilin
+      id: 4
+      context: test
+      changes:
+        - insert:
+            tableName: files
+            columns:
+              - column:
+                  name: file_name
+                  value: file
+              - column:
+                  name: file_size
+                  value: 3333
+              - column:
+                  name: hash
+                  value: "34479832uhf0fa1"
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: bob@mail.ru
+              - column:
+                  name: password
+                  value: qwer
+              - column:
+                  name: role
+                  value: ROLE_USER

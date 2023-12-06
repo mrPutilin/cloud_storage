@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - includeAll:
+      path: db/changelog/test
+      context: test
+
+  - includeAll:
+      path: db/changelog/dev/
+      context: dev
