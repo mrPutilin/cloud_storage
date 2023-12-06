@@ -30,13 +30,13 @@
 Находясь в терминале в корневой директории проекта набрать docker compose up, в результате поднимутся два контейнера, непосредственно сервер, а так же БД postgres,
 которые будут связаны между собой.
 
-Учетные данные для входа:
-ROLE_USER
-login: bob@mail.ru
-password: password1
+Учетные данные для входа:  
+ROLE_USER  
+login: bob@mail.ru  
+password: password1  
 Доступен весь функционал кроме изменения имени.
-
-ROLE_ADMIN
-login: mark@mail.ru
-password: password2
+  
+ROLE_ADMIN  
+login: mark@mail.ru  
+password: password2  
 Доступен весь функционал кроме скачивания файла.
