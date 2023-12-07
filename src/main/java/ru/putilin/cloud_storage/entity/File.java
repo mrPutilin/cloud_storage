@@ -2,6 +2,7 @@ package ru.putilin.cloud_storage.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "files")
@@ -36,6 +37,9 @@ public class File {
 
     @Column(name = "upload_date")
     private LocalDateTime uploadDate;
+
+    @Transient
+    private String file;
 
     public Long getId() {
         return id;
@@ -83,5 +87,26 @@ public class File {
 
     public void setUploadDate(LocalDateTime uploadDate) {
         this.uploadDate = uploadDate;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        File file1 = (File) o;
+        return Objects.equals(id, file1.id) && Objects.equals(fileName, file1.fileName) && Objects.equals(fileSize, file1.fileSize) && Objects.equals(type, file1.type) && Objects.equals(hash, file1.hash) && Objects.equals(uploadDate, file1.uploadDate) && Objects.equals(file, file1.file);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, fileName, fileSize, type, hash, uploadDate, file);
     }
 }

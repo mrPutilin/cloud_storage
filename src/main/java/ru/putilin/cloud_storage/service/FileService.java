@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.putilin.cloud_storage.dao.FileDAO;
-import ru.putilin.cloud_storage.dto.*;
 import ru.putilin.cloud_storage.entity.File;
 import ru.putilin.cloud_storage.exception.ExceptionRelatedHandleFile;
 import ru.putilin.cloud_storage.exception.IncorrectInputException;
@@ -19,19 +18,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
 @Transactional
+@Service
 public class FileService {
 
     private final static Logger LOG = LoggerFactory.getLogger(FileService.class);
     private final FileDAO fileDAO;
     private final FileManager fileManager;
-    private final ModelMapper modelMapper;
 
-    public FileService(FileDAO fileDAO, FileManager fileManager, ModelMapper modelMapper) {
+    public FileService(FileDAO fileDAO, FileManager fileManager) {
         this.fileDAO = fileDAO;
         this.fileManager = fileManager;
-        this.modelMapper = modelMapper;
     }
 
     public void uploadFile(String fileName, MultipartFile file) throws ExceptionRelatedHandleFile {
@@ -58,28 +55,24 @@ public class FileService {
 
     }
 
-    public FileDTO downloadFile(String fileName) throws ExceptionRelatedHandleFile {
-        FileDTO fileDTO = new FileDTO();
+    public File downloadFile(String fileName) throws ExceptionRelatedHandleFile {
 
         Optional<File> file = fileDAO.findByFileName(fileName);
-        if (file.isPresent()) {
-            fileDTO.setHash(file.get().getHash());
-            LOG.info("File {} downloaded from the database", fileName);
-        } else {
+        if (file.isEmpty()) {
             LOG.warn("File {} is not exist in the database", fileName);
             throw new IncorrectInputException("File is not exist");
         }
 
         try {
         Resource downloadingFile = fileManager.download(fileName);
-        fileDTO.setFile(downloadingFile.toString());
+        file.get().setFile(downloadingFile.toString());
         LOG.info("File {} downloaded from the store", fileName);
         } catch (IOException e) {
             LOG.warn("File {} has not been found in the store", fileName);
             throw new ExceptionRelatedHandleFile("File has not been found");
         }
 
-        return fileDTO;
+        return file.get();
     }
 
     public void delete(String fileName) throws ExceptionRelatedHandleFile {
@@ -118,15 +111,12 @@ public class FileService {
 
     }
 
-    public List<FileListDTO> listOfFiles(int limit) {
+    public List<File> listOfFiles(int limit) {
         return fileDAO.findAll(Pageable.ofSize(limit))
                 .stream()
-                .map(this::convertFileToFileList)
                 .collect(Collectors.toList());
     }
 
-    public FileListDTO convertFileToFileList(File file) {
-        return this.modelMapper.map(file, FileListDTO.class);
-    }
+
 
 }

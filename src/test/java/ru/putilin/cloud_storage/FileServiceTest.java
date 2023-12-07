@@ -16,15 +16,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import ru.putilin.cloud_storage.dao.FileDAO;
-import ru.putilin.cloud_storage.dto.FileDTO;
-import ru.putilin.cloud_storage.dto.FileListDTO;
 import ru.putilin.cloud_storage.entity.File;
 import ru.putilin.cloud_storage.exception.IncorrectInputException;
 import ru.putilin.cloud_storage.filemanager.FileManager;
 import ru.putilin.cloud_storage.service.FileService;
-
 import static org.mockito.Mockito.*;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -49,14 +45,11 @@ public class FileServiceTest {
     @Mock
     FileManager fileManager;
 
-    @Mock
-    ModelMapper modelMapper;
-
     @InjectMocks
     FileService fileService;
 
     @BeforeEach
-    void setup() throws IOException {
+    void setup() {
         this.mockedFileEntity = new File("Test", 456666L, "text/plain", "8765", LocalDateTime.now());
         this.fileName = "Test";
         this.fileHash = "8765";
@@ -106,16 +99,13 @@ public class FileServiceTest {
 
     @Test
     void downloadFileWhenFileExistReturnOk() throws MalformedURLException {
-        FileDTO fileDTO = new FileDTO();
-        fileDTO.setHash(fileHash);
         doReturn(Optional.of(mockedFileEntity)).when(fileDAO).findByFileName(fileName);
-
         Path path = Paths.get("uriForTest");
         Resource resource = new UrlResource(path.toUri());
-        fileDTO.setFile(resource.toString());
+        mockedFileEntity.setFile(resource.toString());
         when(fileManager.download(fileName)).thenReturn(resource);
 
-        Assertions.assertEquals(fileDTO, fileService.downloadFile(fileName));
+        Assertions.assertEquals(mockedFileEntity, fileService.downloadFile(fileName));
 
     }
 
@@ -144,19 +134,16 @@ public class FileServiceTest {
 
     @Test
     void listOfFilesThenReturnOk() {
-        FileListDTO testFileListDTO = new FileListDTO();
-        testFileListDTO.setFilename(fileName);
-        testFileListDTO.setSize(fileSize);
-
         List<File> testList = new ArrayList<>();
+        testList.add(mockedFileEntity);
+        testList.add(mockedFileEntity);
         testList.add(mockedFileEntity);
 
         Page<File> testObjectPage = new PageImpl<>(testList);
 
-        when(fileDAO.findAll(Pageable.ofSize(1))).thenReturn(testObjectPage);
-        when(fileService.convertFileToFileList(mockedFileEntity)).thenReturn(testFileListDTO);
+        when(fileDAO.findAll(Pageable.ofSize(3))).thenReturn(testObjectPage);
 
-        Assertions.assertTrue(fileService.listOfFiles(1).contains(testFileListDTO));
+        Assertions.assertEquals(fileService.listOfFiles(3).size(), testList.size());
 
     }
 
