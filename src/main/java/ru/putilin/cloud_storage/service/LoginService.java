@@ -19,7 +19,6 @@ import ru.putilin.cloud_storage.exception.NotAuthorizedException;
 import ru.putilin.cloud_storage.securityconfiguration.JWTUtil;
 
 @Service
-@Transactional
 public class LoginService {
 
     private final static Logger LOG = LoggerFactory.getLogger(LoginService.class);
@@ -40,6 +39,7 @@ public class LoginService {
     }
 
 
+    @Transactional
     public TokenDTO login(UserDTO userDTO) {
 
         String password = new BCryptPasswordEncoder().encode("password2");
